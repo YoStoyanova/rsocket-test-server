@@ -48,6 +48,20 @@ class DynamicRouteTests {
 	}
 
 	@Test
+	void responseEmptyPayload(RSocketMessageRegistry catalog) {
+		MessageMapping response = MessageMapping.response("response")
+				.response(new Foo("Server", "Response"));
+		catalog.register(response);
+		assertThat(rsocketRequester.route("response")
+				.retrieveMono(Foo.class).doOnNext(foo -> {
+					System.err.println(foo);
+					assertThat(foo.getOrigin()).isEqualTo("Server");
+				}).block()).isNotNull();
+		assertThat(response.drain()).hasSize(1);
+		assertThat(response.drain()).hasSize(0);
+	}
+
+	@Test
 	void handler(RSocketMessageRegistry catalog) {
 		MessageMapping response = MessageMapping.<Foo, Foo>response("handler")
 				.handler(Foo.class, foo -> new Foo("Server", "Response"));
