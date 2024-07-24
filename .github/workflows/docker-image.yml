@@ -23,5 +23,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: maven
       - name: Build, check, test, code coverage
-        run: ./gradlew build
+        run: mvn clean install
