@@ -2,17 +2,31 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - 'main'
+  workflow_dispatch:
   pull_request:
-    branches: [ "main" ]
+
+env:
+  SERVICE_NAME: 'gg-user-management'
 
 jobs:
-
   build:
-
-    runs-on: ubuntu-latest
-
+    name: Gradle build
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file server/Dockerfile --tag fake-rsocket-server:$(date +%s)
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.ACTION_READ_ALL_PACKAGES }}
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Build, check, test, code coverage
+        run: ./gradlew build
