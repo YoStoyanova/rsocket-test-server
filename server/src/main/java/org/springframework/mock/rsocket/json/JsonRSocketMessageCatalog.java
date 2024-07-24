@@ -15,6 +15,8 @@
  */
 package org.springframework.mock.rsocket.json;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +26,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -53,10 +57,11 @@ public class JsonRSocketMessageCatalog
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		for (Resource resource : resolver.getResources("catalog/**/*.json")) {
-			MessageMappingData map = json.readValue(StreamUtils
-					.copyToString(resource.getInputStream(), StandardCharsets.UTF_8),
-					MessageMappingData.class);
-			maps.put(map.getPattern(), map.mapping());
+			List<MessageMappingData> mappingData = getMappingData(StreamUtils
+					.copyToString(resource.getInputStream(), StandardCharsets.UTF_8));
+			for (MessageMappingData map : mappingData) {
+				maps.put(map.getPattern(), map.mapping());
+			}
 		}
 	}
 
@@ -79,5 +84,22 @@ public class JsonRSocketMessageCatalog
 	@Override
 	public void register(MessageMapping map) {
 		maps.put(map.getPattern(), map);
+	}
+
+	private boolean isArray(String jsonString) {
+		try {
+			new JSONArray(jsonString);
+			return true;
+		} catch (JSONException e) {
+      return false;
+    }
+  }
+
+	List<MessageMappingData> getMappingData(String jsonString) throws JsonProcessingException {
+		if (isArray(jsonString)) {
+			return json.readValue(jsonString, new TypeReference<>() {});
+		} else {
+			return List.of(json.readValue(jsonString, MessageMappingData.class));
+		}
 	}
 }
