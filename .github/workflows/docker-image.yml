@@ -12,10 +12,12 @@ env:
   
 jobs:
   build:
-    name: Gradle build
     permissions:
       contents: read
+      packages: write
+      attestations: write
       id-token: write
+    name: Gradle build
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout sources
