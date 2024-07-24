@@ -1,12 +1,15 @@
-{
-	"pattern": "response",
-	"frameType": "REQUEST_RESPONSE",
-	"request": {
-		"origin": "Client"
-	},
-	"response": {
-		"origin": "Server",
-		"interaction": "Response",
-		"index": 0
-	}
-}
+[
+  {
+    "pattern": "response",
+    "frameType": "REQUEST_RESPONSE",
+    "request": {
+      "origin": "Client",
+      "interaction": "Request"
+    },
+    "response": {
+      "origin": "Server",
+      "interaction": "Response",
+      "index": 0
+    }
+  }
+]

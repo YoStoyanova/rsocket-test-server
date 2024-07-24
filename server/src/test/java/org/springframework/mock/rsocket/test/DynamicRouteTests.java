@@ -61,6 +61,15 @@ class DynamicRouteTests {
 	}
 
 	@Test
+	void responseJsonMockSpec() {
+		assertThat(rsocketRequester.route("response")
+				.data(new Foo("Client", "Request"))
+				.retrieveMono(Foo.class).doOnNext(foo -> {
+					assertThat(foo.getOrigin()).isEqualTo("Server");
+				}).block()).isNotNull();
+	}
+
+	@Test
 	void handler(RSocketMessageRegistry catalog) {
 		MessageMapping response = MessageMapping.<Foo, Foo>response("handler")
 				.handler(Foo.class, foo -> new Foo("Server", "Response"));

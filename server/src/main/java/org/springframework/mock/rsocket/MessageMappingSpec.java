@@ -104,28 +104,16 @@ abstract class MessageMappingSpec implements MessageMapping {
 			Object object = target.get(key);
 			if (object instanceof String) {
 				Object pattern = source.get(key);
-				if (pattern instanceof String) {
-					if (!matcher.match((String) pattern, matcher.parseRoute(key))) {
-						return false;
-					}
-				}
-				else if (object != null) {
-					return object.equals(pattern);
-				}
+				return object.equals(pattern);
 			}
 			else if (object instanceof Map) {
 				Object other = source.get(key);
-				if (target instanceof Map) {
-					@SuppressWarnings({ "unchecked", "rawtypes" })
-					boolean matches = matches((Map) other, (Map) object);
-					if (!matches) {
-						return false;
-					}
-				}
-				else {
-					return false;
-				}
-			}
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        boolean matches = matches((Map) other, (Map) object);
+        if (!matches) {
+          return false;
+        }
+      }
 			else {
 				return source.get(key) == null;
 			}
