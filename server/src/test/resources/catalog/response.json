@@ -2,7 +2,8 @@
 	"pattern": "response",
 	"frameType": "REQUEST_RESPONSE",
 	"request": {
-		"origin": "Client"
+		"origin": "Client",
+		"interaction" : "Request"
 	},
 	"response": {
 		"origin": "Server",
